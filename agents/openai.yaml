@@ -1,0 +1,7 @@
+interface:
+  display_name: "Selimbey"
+  short_description: "Practical UI/UX direction and quality guidance"
+  default_prompt: "Use $selimbey to design or improve this interface."
+
+policy:
+  allow_implicit_invocation: true
