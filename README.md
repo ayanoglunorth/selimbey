@@ -1,6 +1,64 @@
 # Selimbey
 
-Selimbey is a portable UI/UX skill for Codex. It helps with interface design, redesigns, visual refinement, accessibility, responsive behavior, design systems, and code review. It uses a small entry file and reads detailed guidance only for the work at hand.
+Selimbey is a portable UI/UX skill for Codex. It covers interface design, redesigns, visual refinement, accessibility, responsive behavior, design systems, and code review. It reads extra guidance only when the task needs it.
+
+## Install
+
+Run this once in a terminal:
+
+```bash
+npx skills@latest add ayanoglunorth/selimbey -s selimbey -a codex -g -y
+```
+
+Restart Codex after installation if Selimbey does not appear immediately.
+
+The command installs Selimbey for Codex at user scope. It needs Node.js and network access. The skill itself has no runtime dependencies.
+
+### Update
+
+```bash
+npx skills@latest update selimbey -g -y
+```
+
+### Manual installation
+
+Clone the repository into your Codex skill directory if you prefer Git:
+
+```bash
+git clone https://github.com/ayanoglunorth/selimbey.git ~/.codex/skills/selimbey
+```
+
+On Windows PowerShell, replace `~/.codex/skills/selimbey` with `$HOME\.codex\skills\selimbey`.
+
+## Use it
+
+Call Selimbey directly:
+
+```text
+$selimbey Redesign this analytics dashboard for faster daily use.
+```
+
+Codex can also select Selimbey automatically for ordinary UI and UX work.
+
+For a first-run check of optional design companions, use:
+
+```text
+$selimbey setup
+```
+
+Setup checks the current capability catalog, identifies useful gaps, suggests verified installable options, and asks before installing anything.
+
+## Optional companions
+
+Selimbey works without companion skills. Setup can look for one suitable option in each of these groups:
+
+- UI and UX reference material for interaction patterns, accessibility, responsive behavior, and components.
+- Interface critique and refinement for detailed visual review.
+- Visual direction for landing pages, portfolios, and frontend art direction.
+
+The names and availability of these capabilities differ across installations. Selimbey uses descriptions from the active catalog instead of expecting a fixed local skill set. It recommends only verified sources and installs only after approval.
+
+Image generation, screenshot reproduction, complex motion, brand work, presentations, and formal UI audits remain task-specific. Selimbey adds them only when a request needs them.
 
 ## What it covers
 
@@ -11,66 +69,7 @@ Selimbey supports four surface modes:
 - Read for documentation, articles, and help.
 - Experience for portfolios, galleries, and exhibition sites.
 
-The skill also includes focused references for building interfaces, visual craft, quality checks, redesign work, design systems, visual direction, and companion discovery.
-
-## Installation
-
-Selimbey has no runtime dependencies. Install it in the skill directory used by your Codex environment. The examples below use `~/.codex/skills`, which is the standard Codex location.
-
-### Git on Windows
-
-```powershell
-$skillPath = Join-Path $HOME ".codex\skills\selimbey"
-
-if (Test-Path (Join-Path $skillPath ".git")) {
-    git -C $skillPath pull --ff-only
-} elseif (Test-Path $skillPath) {
-    throw "The target exists but is not a Git clone: $skillPath"
-} else {
-    New-Item -ItemType Directory -Force (Split-Path $skillPath) | Out-Null
-    git clone https://github.com/ayanoglunorth/selimbey.git $skillPath
-}
-```
-
-Run the same command later to update an existing Git installation.
-
-### Git on macOS or Linux
-
-```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/ayanoglunorth/selimbey.git ~/.codex/skills/selimbey
-```
-
-To update it:
-
-```bash
-git -C ~/.codex/skills/selimbey pull --ff-only
-```
-
-### ZIP installation
-
-1. Download the repository ZIP from GitHub.
-2. Extract it and rename the folder to `selimbey` if needed.
-3. Move the folder to your Codex skill directory, usually `~/.codex/skills/selimbey`.
-4. Restart Codex if the skill menu does not refresh immediately.
-
-The installed folder must contain `SKILL.md` at its root.
-
-## Usage
-
-Call the skill directly:
-
-```text
-$selimbey Redesign this analytics dashboard for faster daily use.
-```
-
-Selimbey also allows implicit invocation. A Codex environment can select it for ordinary UI/UX work without an explicit command.
-
-## Companion skills
-
-Selimbey does not bundle image generation, screenshot reproduction, motion libraries, brand tools, presentation tools, or UI-audit tools. Those capabilities vary from one installation to another.
-
-When a task needs one of them, Selimbey checks the capabilities available in the active session, chooses the narrowest suitable specialist, and reads its instructions. If none is available, Selimbey continues with its own guidance. This keeps the package portable and avoids a fixed dependency on someone else’s local skill set.
+Its references cover interface building, visual craft, quality checks, redesign work, design systems, visual direction, companion discovery, and companion setup.
 
 ## Structure
 
@@ -85,6 +84,7 @@ selimbey/
 │   ├── craft.md
 │   ├── quality.md
 │   ├── redesign.md
+│   ├── setup.md
 │   ├── system.md
 │   └── visual-direction.md
 ├── .gitignore
@@ -94,7 +94,7 @@ selimbey/
 
 ## Compatibility
 
-Selimbey needs a Codex surface that supports local skills. Companion discovery depends on the capabilities exposed by that surface. The skill does not install missing tools, change permissions, or guarantee access to an optional specialist.
+Selimbey needs a Codex surface with local skill support. Companion setup depends on the capabilities exposed by that surface. It does not install missing tools, change permissions, or use an unverified source without the user’s approval.
 
 ## License
 

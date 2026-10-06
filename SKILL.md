@@ -18,6 +18,7 @@ Load only the reference that affects the work:
 | Shared components, tokens, themes, or multiple related surfaces | [system.md](references/system.md) |
 | Implemented UI, audit, form, responsive behavior, or motion | [quality.md](references/quality.md) |
 | A task may benefit from another locally available capability | [companions.md](references/companions.md) |
+| First-run setup or companion installation | [setup.md](references/setup.md) |
 
 For a new or redesigned surface, begin with one design read: product purpose, audience, surface mode, visual character, density, and motion level. Pick one coherent direction.
 
