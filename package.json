@@ -1,0 +1,13 @@
+{
+  "name": "selimbey-installer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": "./install.mjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22.20.0"
+  }
+}

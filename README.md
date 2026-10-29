@@ -1,83 +1,126 @@
 # Selimbey
 
-Selimbey is a portable UI/UX skill for Codex. It covers interface design, redesigns, visual refinement, accessibility, responsive behavior, design systems, and code review. It reads extra guidance only when the task needs it.
+Selimbey helps coding agents design, improve, and review interfaces. It covers
+web, mobile, and desktop work, from a single form to a broader redesign. Before
+changing an existing product, it looks at the current interface, components,
+brand, and codebase.
 
-## Install
+The main skill is self-contained. It opens supporting references when a task
+calls for them; the design companions below are optional.
 
-Run this once in a terminal:
+## Highlights
 
-```bash
-npx skills@latest add ayanoglunorth/selimbey -s selimbey -a codex -g -y
-```
+- Handles new screens, redesigns, design systems, and reviews in one skill.
+- Treats a pricing page differently from a dashboard or an article.
+- Works with the project's existing components, tokens, icons, and styling.
+- Checks the states and viewports the changed interface actually reaches.
+- Calls on an installed specialist only when the task needs its specific tools.
 
-Restart Codex after installation if Selimbey does not appear immediately.
+## Installation
 
-The command installs Selimbey for Codex at user scope. It needs Node.js and network access. The skill itself has no runtime dependencies.
-
-### Update
-
-```bash
-npx skills@latest update selimbey -g -y
-```
-
-### Manual installation
-
-Clone the repository into your Codex skill directory if you prefer Git:
+Run the interactive installer with Node.js 22.20 or later:
 
 ```bash
-git clone https://github.com/ayanoglunorth/selimbey.git ~/.codex/skills/selimbey
+npx -y github:ayanoglunorth/selimbey
 ```
 
-On Windows PowerShell, replace `~/.codex/skills/selimbey` with `$HOME\.codex\skills\selimbey`.
+Choose one or more agents: Codex, Claude Code, Cursor, Gemini CLI, Antigravity
+IDE, or Antigravity CLI (`agy`). Gemini CLI and Antigravity are separate
+targets. Then choose the design companions you want; none are selected by
+default. The installer uses user scope, skips skill folders it finds, and
+reports each result. Restart the agent or open a new chat afterward.
 
-## Use it
+Use `--dry-run` to preview commands without installing. Use `--help` for usage.
+On npm 12 or newer, add `--allow-git=root` after `npx` if npm blocks a GitHub
+package with `EALLOWGIT`.
 
-Call Selimbey directly:
+For a standard skill-only installation without companion selection:
+
+```bash
+npx skills@latest add ayanoglunorth/selimbey --skill selimbey -a codex -g
+```
+
+Change `codex` to another agent supported by the [Skills CLI](https://github.com/vercel-labs/skills/blob/main/docs/commands.md).
+Selimbey itself has no runtime dependencies. Its installer needs Node.js and
+network access.
+
+### Update or install manually
+
+For an existing Skills CLI installation:
+
+```bash
+npx skills@latest update selimbey -g
+```
+
+The interactive installer skips existing skill folders. For a manual Codex
+install, clone this repository into `~/.agents/skills/selimbey` and restart
+Codex. Other agents use their own skill directories.
+
+## Optional design companions
+
+The terminal installer offers three independent choices:
+
+| Companion | What it adds | Source |
+| --- | --- | --- |
+| Impeccable | Detailed interface critique and polish, with agent-specific integrations | [Official site](https://impeccable.style/docs/) |
+| Taste Skill (`design-taste-frontend`) | Stronger visual direction for frontend work | [Repository](https://github.com/Leonxlnx/taste-skill) |
+| UI UX Pro Max | Searchable styles, palettes, typography, UX guidance, and stack-specific references | [Repository](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
+
+Choose any combination or skip them all. The installer uses the project's
+documented terminal method where one exists for the selected agent. It reports
+unsupported pairs with a link to manual instructions. Impeccable's global
+install provides the skill; its edit hooks are project-specific on some agents.
+UI UX Pro Max needs Python 3 when its search script runs.
+
+During ordinary UI work, Selimbey may use an already installed specialist. It
+does not install companions as part of a design task.
+
+## Usage
+
+Invoke Selimbey directly:
 
 ```text
 $selimbey Redesign this analytics dashboard for faster daily use.
 ```
 
-Codex can also select Selimbey automatically for ordinary UI and UX work.
+Other examples:
 
-For a first-run check of optional design companions, use:
+```text
+$selimbey Review this form for keyboard access and mobile layout issues.
+$selimbey Build a pricing page using this project's current components.
+```
+
+Codex may also select Selimbey automatically for ordinary UI and UX requests. For an optional check of available design companions after installation, start a new chat and use:
 
 ```text
 $selimbey setup
 ```
 
-Setup checks the current capability catalog, identifies useful gaps, suggests verified installable options, and asks before installing anything.
+This chat command checks the capabilities the current host exposes, suggests
+verified options for any gaps, and asks before installing. It runs separately
+from the terminal installer.
 
-## Optional companions
+## How it works
 
-Selimbey works without companion skills. Setup can look for one suitable option in each of these groups:
+1. Read the brief and inspect the product if one exists.
+2. Match the work to its surface: **Persuade** for marketing, **Operate** for tools and dashboards, **Read** for content, or **Experience** for portfolios and galleries.
+3. Open the reference that fits the job, such as building, redesign, visual direction, or quality.
+4. Work in the current stack and check the changed flow at relevant sizes and states.
 
-- UI and UX reference material for interaction patterns, accessibility, responsive behavior, and components.
-- Interface critique and refinement for detailed visual review.
-- Visual direction for landing pages, portfolios, and frontend art direction.
+The [SKILL.md](SKILL.md) file contains the entrypoint and routing table. Guidance in `references/` is loaded only when its situation applies. `agents/openai.yaml` defines display metadata and automatic invocation policy.
 
-The names and availability of these capabilities differ across installations. Selimbey uses descriptions from the active catalog instead of expecting a fixed local skill set. It recommends only verified sources and installs only after approval.
+## Limitations
 
-Image generation, screenshot reproduction, complex motion, brand work, presentations, and formal UI audits remain task-specific. Selimbey adds them only when a request needs them.
+- Selimbey provides UI/UX guidance; a task may still require a separate image, motion, brand, browser, or presentation capability.
+- Companion installation depends on the selected agent's supported native installer. Unsupported pairs are reported, not silently replaced by a reduced integration.
+- Existing product behavior, brand rules, user permissions, and host policy still govern the work.
 
-## What it covers
-
-Selimbey supports four surface modes:
-
-- Persuade for marketing pages, campaigns, and pricing.
-- Operate for apps, dashboards, tools, and settings.
-- Read for documentation, articles, and help.
-- Experience for portfolios, galleries, and exhibition sites.
-
-Its references cover interface building, visual craft, quality checks, redesign work, design systems, visual direction, companion discovery, and companion setup.
-
-## Structure
+## Project structure
 
 ```text
 selimbey/
 ├── SKILL.md
-├── agents/
-│   └── openai.yaml
+├── agents/openai.yaml
 ├── references/
 │   ├── build.md
 │   ├── companions.md
@@ -87,15 +130,21 @@ selimbey/
 │   ├── setup.md
 │   ├── system.md
 │   └── visual-direction.md
-├── .gitignore
+├── install.mjs
+├── install.test.mjs
+├── package.json
 ├── LICENSE
 └── README.md
 ```
 
-## Compatibility
+## Validation
 
-Selimbey needs a Codex surface with local skill support. Companion setup depends on the capabilities exposed by that surface. It does not install missing tools, change permissions, or use an unverified source without the user’s approval.
+Run `npm test` to check installer choices and failure handling. The skill can also be checked with Codex Skill Creator's `quick_validate.py`. These checks do not install third-party companions; use `--dry-run` to inspect the terminal flow.
+
+## Contributing
+
+Focused issues and pull requests are welcome. Keep the core skill portable, and add specialist guidance only when it improves a concrete UI task.
 
 ## License
 
-Selimbey is released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE).
