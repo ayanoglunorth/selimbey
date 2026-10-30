@@ -1,6 +1,6 @@
 ---
 name: selimbey
-description: Design, redesign, improve, or review web, mobile, and desktop interfaces with clear visual direction, practical UX, and production-ready implementation guidance. Use for ordinary UI/UX work. Excludes brand identity packages, slide decks, and image-only requests.
+description: Designs, improves, and reviews web, mobile, and desktop interfaces. Use for UI/UX work, including screens, redesigns, and interface quality checks.
 ---
 
 # Selimbey
@@ -17,7 +17,7 @@ Load only the reference that affects the work:
 | A substantial upgrade to an existing interface | [redesign.md](references/redesign.md) |
 | Shared components, tokens, themes, or multiple related surfaces | [system.md](references/system.md) |
 | Implemented UI, audit, form, responsive behavior, or motion | [quality.md](references/quality.md) |
-| A task may benefit from another locally available capability | [companions.md](references/companions.md) |
+| The user names a specialist skill or asks for a specific design method or output | [companions.md](references/companions.md) |
 | First-run setup or companion installation | [setup.md](references/setup.md) |
 
 For a new or redesigned surface, begin with one design read: product purpose, audience, surface mode, visual character, density, and motion level. Pick one coherent direction.

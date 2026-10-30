@@ -14,7 +14,7 @@ calls for them; the design companions below are optional.
 - Treats a pricing page differently from a dashboard or an article.
 - Works with the project's existing components, tokens, icons, and styling.
 - Checks the states and viewports the changed interface actually reaches.
-- Calls on an installed specialist only when the task needs its specific tools.
+- Uses an available specialist's full instructions when the user names it or requests its particular method or output.
 
 ## Installation
 
@@ -72,8 +72,10 @@ unsupported pairs with a link to manual instructions. Impeccable's global
 install provides the skill; its edit hooks are project-specific on some agents.
 UI UX Pro Max needs Python 3 when its search script runs.
 
-During ordinary UI work, Selimbey may use an already installed specialist. It
-does not install companions as part of a design task.
+During ordinary UI work, Selimbey uses an available specialist when the user
+names it or requests its particular method or output. It reads that skill's
+complete instructions and follows the applicable workflow. It does not install
+companions as part of a design task.
 
 ## Usage
 
