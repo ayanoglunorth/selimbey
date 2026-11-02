@@ -28,3 +28,16 @@ Motion should communicate feedback, causality, or spatial continuity. It must re
 Reserve media dimensions or aspect ratios. Load appropriately sized images, defer heavy below-the-fold media, and avoid large visual dependencies without a clear benefit. Keep expensive work out of scroll and resize paths. Use the project’s established list virtualization pattern when the data volume needs it.
 
 Review task flow and accessibility first, then responsive behavior and content hierarchy, then states and feedback, and finally visual polish. Report code-review findings with concrete file and line references.
+
+## Verification
+
+Run this once after the change, collect every finding, fix them together, then confirm once.
+
+1. **Run it.** Start the dev server or open the file and look at the rendered result, not only the code. If nothing can be rendered, say so and review the code against this list.
+2. **Widths.** 320, 375, 768, 1280, and any breakpoint where the layout changes. Check overflow, clipped text, and content under fixed bars. Zoom to 200% and confirm reflow.
+3. **Themes.** Light and dark when both exist. Re-check contrast in each.
+4. **Keyboard.** Tab through the changed flow: order matches the visual order, focus is always visible, overlays trap and return focus, Escape closes them.
+5. **States.** Trigger loading, empty, error, success, and disabled paths, not just the happy path.
+6. **Motion.** Enable reduced motion and confirm nothing essential depends on animation.
+7. **Console.** No new errors or warnings; no layout shift while content loads (CLS under 0.1; LCP under 2.5 s and INP under 200 ms on web where measurable).
+8. **Report.** Say what was checked and what was not (for example, "dark theme not checked: no dark tokens exist"). Do not claim a check you did not run.

@@ -34,7 +34,14 @@ npx -y github:ayanoglunorth/selimbey
 
 Choose one or more agents: Codex, Claude Code, Cursor, Gemini CLI, Antigravity IDE, or Antigravity CLI (`agy`). Gemini CLI and Antigravity are separate targets. Then choose the design companions you want; none are selected by default. The installer uses user scope, skips skill folders it finds, and reports each result. Restart the agent or open a new chat afterward.
 
-Use `--dry-run` to preview commands without installing and `--help` for usage. On npm 12 or newer, add `--allow-git=root` after `npx` if npm blocks a GitHub package with `EALLOWGIT`.
+For scripts, CI, or an agent's own shell (no terminal prompts), pass ids directly:
+
+```bash
+npx -y github:ayanoglunorth/selimbey --agent claude-code,codex --companion impeccable,ui-ux-pro-max
+npx -y github:ayanoglunorth/selimbey --agent codex --all-companions --dry-run
+```
+
+`--list` prints valid agent and companion ids. After each install the installer checks that the skill folder exists and reports `unverified` instead of `installed` when it cannot find it. Use `--dry-run` to preview commands without installing and `--help` for usage. On npm 12 or newer, add `--allow-git=root` after `npx` if npm blocks a GitHub package with `EALLOWGIT`.
 
 For a standard skill-only installation without companion selection:
 
@@ -72,7 +79,8 @@ $selimbey Build a pricing page using this project's current components.
 Codex may also select Selimbey automatically for ordinary UI and UX requests. For an optional check of available design companions after installation, start a new chat and use:
 
 ```text
-$selimbey setup
+$selimbey setup      (Codex)
+/selimbey setup      (Claude Code)
 ```
 
 This chat command checks the capabilities the current host exposes, suggests verified options for any gaps, and asks before installing. It runs separately from the terminal installer.
@@ -95,8 +103,9 @@ During ordinary UI work, Selimbey uses an available specialist when the user nam
 
 1. Read the brief and inspect the product if one exists.
 2. Match the work to its surface: **Persuade** for marketing, **Operate** for tools and dashboards, **Read** for content, or **Experience** for portfolios and galleries.
-3. Open the reference that fits the job, such as building, redesign, visual direction, or quality.
-4. Work in the current stack and check the changed flow at relevant sizes and states.
+3. Open the one reference that fits the job (build, redesign, visual direction, native, quality). Ordinary work stays inside the compact baseline in `SKILL.md`.
+4. Hand off to an installed specialist (Taste, Impeccable, UI UX Pro Max, motion, image) only when its depth is needed, per the router in `references/companions.md`; read only the part of it the task needs.
+5. Verify once: widths, themes, keyboard, states, reduced motion, console.
 
 [SKILL.md](SKILL.md) contains the entrypoint and routing table. Guidance in `references/` is loaded only when its situation applies. `agents/openai.yaml` defines display metadata and automatic invocation policy.
 
@@ -116,6 +125,7 @@ selimbey/
 ├── references/
 │   ├── build.md
 │   ├── companions.md
+│   ├── native.md
 │   ├── craft.md
 │   ├── quality.md
 │   ├── redesign.md

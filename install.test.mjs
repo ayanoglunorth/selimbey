@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { parseSelection, install, installed } from './install.mjs';
+import { parseSelection, parseOptions, install, installed } from './install.mjs';
 
 test('multi-selection accepts several entries and an empty optional selection', () => {
   assert.deepEqual(parseSelection('1, 3', 4), [0, 2]);
@@ -17,7 +17,7 @@ test('all selected agents receive the main skill and selected native companions'
     run: async (command, args) => { calls.push([command, args]); if (args.includes('--ai') && args.includes('codex')) throw new Error('failed'); },
   });
   assert.equal(results.find(x => x.name === 'ui-ux-pro-max' && x.agent === 'codex').status, 'failed');
-  assert.equal(results.find(x => x.name === 'ui-ux-pro-max' && x.agent === 'gemini-cli').status, 'installed');
+  assert.equal(results.find(x => x.name === 'ui-ux-pro-max' && x.agent === 'gemini-cli').status, 'unverified');
   assert.equal(calls.filter(([, args]) => args.includes('ayanoglunorth/selimbey')).length, 2);
   assert.ok(calls.some(([, args]) => args.includes('--providers=codex')));
 });
@@ -47,4 +47,25 @@ test('existing check uses Antigravity and Gemini global directories', () => {
   assert.ok(paths.includes(join('/home/test', '.gemini', 'antigravity', 'skills', 'selimbey')));
   assert.ok(paths.includes(join('/home/test', '.gemini', 'antigravity-cli', 'skills', 'selimbey')));
   assert.ok(paths.includes(join('/home/test', '.gemini', 'skills', 'selimbey')));
+});
+
+test('a clean exit is reported installed only when the skill folder appears', async () => {
+  const present = new Set();
+  const results = await install({
+    agents: ['codex'], companions: [],
+    exists: (name, agent) => present.has(`${name}:${agent}`),
+    run: async () => present.add('selimbey:codex'),
+  });
+  assert.equal(results[0].status, 'installed');
+});
+
+test('non-interactive options split lists, expand all companions, and reject unknown ids', () => {
+  const parsed = parseOptions(['--agent', 'codex,claude-code', '--companion', 'impeccable', '--dry-run']);
+  assert.deepEqual(parsed.agents, ['codex', 'claude-code']);
+  assert.deepEqual(parsed.companions, ['impeccable']);
+  assert.equal(parsed.dryRun, true);
+  assert.equal(parseOptions(['--agent', 'codex', '--all-companions']).companions.length, 3);
+  assert.throws(() => parseOptions(['--agent', 'vim']));
+  assert.throws(() => parseOptions(['--companion', 'nope']));
+  assert.throws(() => parseOptions(['--bogus']));
 });
