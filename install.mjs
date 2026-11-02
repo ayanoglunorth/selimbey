@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
 import { pathToFileURL } from 'node:url';
+import { parseArgs } from 'node:util';
 
 const project = 'selimbey';
 const agents = [
@@ -25,6 +26,22 @@ export function parseSelection(value, length) {
     throw new Error(`Enter numbers from 1 to ${length}, separated by commas.`);
   }
   return [...new Set(parts.map(part => Number(part) - 1))];
+}
+
+export function parseOptions(argv) {
+  const { values } = parseArgs({ args: argv, strict: true, options: {
+    agent: { type: 'string', multiple: true }, companion: { type: 'string', multiple: true },
+    'all-companions': { type: 'boolean' }, 'dry-run': { type: 'boolean' },
+    list: { type: 'boolean' }, help: { type: 'boolean' },
+  } });
+  const split = list => (list ?? []).flatMap(value => value.split(',')).map(value => value.trim()).filter(Boolean);
+  const targets = [...new Set(split(values.agent))];
+  const picked = values['all-companions'] ? companions.map(item => item[0]) : [...new Set(split(values.companion))];
+  const unknownAgent = targets.find(id => !agents.some(item => item[0] === id));
+  if (unknownAgent) throw new Error(`Unknown agent "${unknownAgent}". Use --list to see valid ids.`);
+  const unknownCompanion = picked.find(id => !companions.some(item => item[0] === id));
+  if (unknownCompanion) throw new Error(`Unknown companion "${unknownCompanion}". Use --list to see valid ids.`);
+  return { agents: targets, companions: picked, dryRun: !!values['dry-run'], list: !!values.list, help: !!values.help };
 }
 
 function steps(name, agent) {
@@ -52,7 +69,10 @@ export function installed(name, agent, pathExists = existsSync, home = homedir()
 
 function execute(command, args, dryRun) {
   if (dryRun) { console.log(`  ${[command, ...args].join(' ')}`); return; }
-  const result = spawnSync(command, args, { stdio: 'inherit', shell: process.platform === 'win32' });
+  // Windows needs a shell for npx.cmd; passing args alongside shell:true triggers DEP0190. Every arg is a constant or an allow-listed id.
+  const result = process.platform === 'win32'
+    ? spawnSync([command, ...args].join(' '), { stdio: 'inherit', shell: true })
+    : spawnSync(command, args, { stdio: 'inherit' });
   if (result.error || result.status !== 0) throw result.error ?? new Error(`Exit code ${result.status}`);
 }
 
@@ -72,7 +92,8 @@ export async function install({ agents: targets, companions: selected = [], exis
       if (!commands) { results.push({ name, agent, status: 'manual step' }); continue; }
       try {
         for (const [command, args] of commands) await run(command, args, dryRun);
-        results.push({ name, agent, status: dryRun ? 'planned' : 'installed' });
+        // Third-party installers can exit 0 without writing where we look (plugins, project scope), so confirm rather than assume.
+        results.push({ name, agent, status: dryRun ? 'planned' : exists(name, agent) ? 'installed' : 'unverified' });
       } catch (error) {
         results.push({ name, agent, status: 'failed', detail: error.message });
       }
@@ -96,26 +117,35 @@ async function choose(reader, title, items, required) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.includes('--help')) {
-    console.log(`Install ${project} with optional companions.\nUsage: npx -y github:ayanoglunorth/${project} [--dry-run]\nSelect one or more agents, then any companions. User scope is the default. Antigravity IDE and Antigravity CLI are separate targets.`);
+  const options = parseOptions(process.argv.slice(2));
+  if (options.help) {
+    console.log(`Install ${project} with optional companions.
+Interactive:      npx -y github:ayanoglunorth/${project} [--dry-run]
+Non-interactive:  npx -y github:ayanoglunorth/${project} --agent claude-code,codex [--companion impeccable,ui-ux-pro-max | --all-companions] [--dry-run]
+Other:            --list prints valid agent and companion ids.
+User scope is the default. Antigravity IDE and Antigravity CLI are separate targets.`);
     return;
   }
-  if (args.some(arg => arg !== '--dry-run')) throw new Error('Unknown option. Use --help.');
-  if (!process.stdin.isTTY) throw new Error('Interactive terminal required. Use npx skills add for non-interactive installation.');
-  const reader = createInterface({ input: process.stdin, output: process.stdout });
+  if (options.list) {
+    console.log(`Agents:\n${agents.map(item => `  ${item[0]}  ${item[1]}`).join('\n')}\nCompanions:\n${companions.map(item => `  ${item[0]}  ${item[1]} — ${item[2]}`).join('\n')}`);
+    return;
+  }
+  const interactive = !options.agents.length;
+  if (interactive && !process.stdin.isTTY) throw new Error('No terminal for prompts. Pass --agent (see --help) to install non-interactively.');
+  const reader = interactive ? createInterface({ input: process.stdin, output: process.stdout }) : null;
   try {
-    const targets = await choose(reader, 'Select target agents', agents, true);
-    const selected = await choose(reader, 'Optional companions (none selected by default)', companions, false);
-    const results = await install({ agents: targets, companions: selected, dryRun: args.includes('--dry-run') });
+    const targets = interactive ? await choose(reader, 'Select target agents', agents, true) : options.agents;
+    const selected = interactive ? await choose(reader, 'Optional companions (none selected by default)', companions, false) : options.companions;
+    const results = await install({ agents: targets, companions: selected, dryRun: options.dryRun });
     console.log('\nResults');
     for (const result of results) {
       console.log(`  ${result.agent} / ${result.name}: ${result.status}${result.detail ? ` (${result.detail})` : ''}`);
       if (result.status === 'manual step') console.log(`    ${manualStep(result.name, result.agent)}`);
+      if (result.status === 'unverified') console.log('    The installer exited cleanly but no skill folder was found where expected; restart the agent and check its skill list.');
     }
     console.log('Restart or open a new chat in your agents to load installed skills.');
     if (results.some(result => result.status === 'failed')) process.exitCode = 1;
-  } finally { reader.close(); }
+  } finally { reader?.close(); }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

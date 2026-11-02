@@ -1,6 +1,6 @@
 # Companion setup
 
-Read this when the user asks for `$selimbey setup`, requests recommended companions, or asks Selimbey to install a design capability.
+Read this when the user asks for `$selimbey setup` (`/selimbey setup` in Claude Code), requests recommended companions, or asks Selimbey to install a design capability.
 
 Selimbey covers ordinary interface work without any companion. Setup is optional. Its purpose is to find useful gaps in the current environment without adding overlapping skills by default.
 
